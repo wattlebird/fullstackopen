@@ -1,0 +1,12 @@
+title 0.6 new note
+
+Note over Client: 
+User fulfills a new note and click submit
+End note
+
+Client->Server: HTTP POST /new-note-spa (with json as payload)
+Server-->Client: HTTP 201 (with json response {message: "note created"})
+
+Note over Client: 
+Client rerenders its content with appended note
+End note

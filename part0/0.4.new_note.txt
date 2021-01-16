@@ -1,0 +1,25 @@
+title 0.4 new note
+
+Note over Client: 
+User fulfills a new note and click submit
+End note
+
+Client->Server: HTTP POST /new-note
+Server-->Client: HTTP Status 302: redirect to /notes
+Client->Server: HTTP GET /notes
+Server-->Client: HTML code
+Client->Server: HTTP GET main.css
+Server-->Client: main.css
+Client->Server: HTTP GET main.js
+Server-->Client: main.js
+
+Note over Client:
+Browser parse JavaScript code and execute
+End note
+
+Client->Server: HTTP GET /data.json
+Server-->Client: json content
+
+Note over Client:
+Browser renders json content
+End note

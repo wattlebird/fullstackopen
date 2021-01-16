@@ -1,0 +1,21 @@
+title 0.5 Single page app
+
+Client->Server: HTTP GET /spa
+Server-->Client: HTML code
+Client->Server: HTTP GET main.css
+Server-->Client: main.css
+Client->Server: HTTP GET main.js
+Server-->Client: main.js
+
+note over Client:
+Client starts executing js-code
+that requests JSON data from server
+end note
+
+Client->Server: HTTP GET /data.json
+Server-->Client: json content
+
+note over Client:
+Client executes the event handler
+that renders notes to display
+end note
