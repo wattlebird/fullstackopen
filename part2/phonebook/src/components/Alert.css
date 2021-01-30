@@ -1,0 +1,17 @@
+.alert {
+    font-size: 20px;
+    border-style: solid;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+.alert-error {
+    color: red;
+    background: lightsalmon;
+}
+
+.alert-success {
+    color: green;
+    background-color: lightgreen;
+}
