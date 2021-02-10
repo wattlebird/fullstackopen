@@ -6,11 +6,11 @@ GET http://localhost:3001/info
 
 ###
 
-GET http://localhost:3001/api/persons/1
+GET http://localhost:3001/api/persons/602289b2b1e261308fd77975
 
 ###
 
-DELETE http://localhost:3001/api/persons/2
+DELETE http://localhost:3001/api/persons/602289b2b1e261308fd77975
 
 ###
 
@@ -18,10 +18,10 @@ DELETE http://localhost:3001/api/persons/333
 
 ###
 
-POST http://localhost:3001/api/persons HTTP/1.1
+PUT http://localhost:3001/api/persons HTTP/1.1
 Content-Type: application/json
 
 {
-    "name": "fufuji97",
-    "number": 33333
+    "name": "keaising",
+    "number": 44444
 }

@@ -1,81 +1,99 @@
-const express = require('express')
-const morgan = require('morgan')
-const app = express()
+require('dotenv').config();
 
-morgan.token('content', (req, res) => {
-  if (req.method === "POST") return JSON.stringify(req.body)
-  else return ""
-})
+const express = require('express');
+const morgan = require('morgan');
+// const cors = require('cors')
+const PhoneItemModel = require('./models/phoneitem');
 
-app.use(express.json())
-app.use(morgan(':method :url :status :res[content-length] - :response-time ms :content'))
+const app = express();
 
-const phonebook = [
-  {
-    "name": "Arto Hellas",
-    "number": "040-123456",
-    "id": 1
-  },
-  {
-    "name": "Ada Lovelace",
-    "number": "39-44-5323523",
-    "id": 2
-  },
-  {
-    "name": "Dan Abramov",
-    "number": "12-43-234345",
-    "id": 3
-  },
-  {
-    "name": "Mary Poppendieck",
-    "number": "39-23-6423122",
-    "id": 4
-  }
-]
+// app.use(cors())
+
+morgan.token('content', (req) => {
+  if (req.method === 'POST') return JSON.stringify(req.body);
+  return '';
+});
+
+app.use(express.json());
+app.use(morgan(':method :url :status :res[content-length] - :response-time ms :content'));
 
 app.get('/api/persons', (req, res) => {
-  res.json(phonebook)
-})
+  PhoneItemModel.find().then((people) => {
+    res.json(people);
+  });
+});
 
-app.get('/api/persons/:id', (req, res) => {
-  const id = Number(req.params.id)
-  const i = phonebook.findIndex(itm => itm.id === id)
-  if (i === -1) {
-    res.status(404).end()
-  } else {
-    res.json(phonebook[i])
-  }
-})
+app.get('/api/persons/:id', (req, res, next) => {
+  PhoneItemModel.findById(String(req.params.id)).then((person) => {
+    if (!person) {
+      res.status(404).end();
+    } else {
+      res.json(person);
+    }
+  }).catch((err) => next(err));
+});
 
-app.delete('/api/persons/:id', (req, res) => {
-  const id = Number(req.params.id)
-  const i = phonebook.findIndex(itm => itm.id === id)
-  if (i === -1) {
-    res.status(404).end()
-  } else {
-    phonebook.splice(i, 1)
-    res.status(204).end()
-  }
-})
+app.delete('/api/persons/:id', (req, res, next) => {
+  PhoneItemModel.findByIdAndDelete(String(req.params.id)).then((rst) => {
+    if (rst) {
+      res.status(204).end();
+    } else {
+      res.status(404).end();
+    }
+  }).catch((err) => next(err));
+});
 
-app.post('/api/persons', (req, res) => {
+app.post('/api/persons', (req, res, next) => {
   if (!req.body) {
-    return res.status(400).send({"error": "empty request"});
-  } else if (!req.body.name || !req.body.number) {
-    return res.status(400).send({"error": "Name or number not provided."})
-  } else if (phonebook.findIndex(itm => itm.name === req.body.name) !== -1) {
-    return res.status(400).send({"error": "Name must be unique."})
+    return res.status(400).send({ error: 'empty request' });
+  } if (!req.body.name || !req.body.number) {
+    return res.status(400).send({ error: 'Name or number not provided.' });
   }
-  const item = {
-    ...req.body,
-    id: Math.floor(Math.random()*100000)
+  const item = new PhoneItemModel({
+    name: req.body.name,
+    number: req.body.number,
+  });
+  return item.save().then((savedItem) => {
+    res.json(savedItem);
+  }).catch((err) => next(err));
+});
+
+app.put('/api/persons/:id', (req, res, next) => {
+  if (!req.body) {
+    return res.status(400).send({ error: 'empty request' });
+  } if (!req.body.name || !req.body.number) {
+    return res.status(400).send({ error: 'Name or number not provided.' });
   }
-  phonebook.push(item)
-  res.json(item)
-})
+  return PhoneItemModel.findByIdAndUpdate(String(req.params.id), {
+    name: req.body.name,
+    number: req.body.number,
+  }, { new: true, runValidators: true }).then((updatedItem) => {
+    res.json(updatedItem);
+  }).catch((err) => next(err));
+});
 
 app.get('/info', (req, res) => {
-  res.send(`The phonebook has ${phonebook.length} people.\n${new Date()}`)
-})
+  PhoneItemModel.count().then((cnt) => {
+    res.send(`The phonebook has ${cnt} people.\n${new Date()}`);
+  });
+});
 
-app.listen(3001)
+// unknown endpoint handler
+const unknownEndpoint = (request, response) => {
+  response.status(404).send({ error: 'unknown endpoint' });
+};
+app.use(unknownEndpoint);
+
+// catch handler
+const errorHandler = (error, request, response, next) => {
+  // console.error(error.message);
+  if (error.name === 'CastError' && error.kind === 'ObjectId') {
+    return response.status(400).send({ error: 'malformatted id' });
+  } if (error.name === 'ValidationError') {
+    return response.status(400).json({ error: error.message });
+  }
+  return next(error);
+};
+app.use(errorHandler);
+
+app.listen(process.env.PORT);

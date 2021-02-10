@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const BaseUrl = "http://localhost:3001/persons"
+const BaseUrl = "http://localhost:3000/api/persons"
 
 const Api = {
   GetPhonebook: () => {

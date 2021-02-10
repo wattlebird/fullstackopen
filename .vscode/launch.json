@@ -11,6 +11,7 @@
             "skipFiles": [
                 "<node_internals>/**"
             ],
+            "envFile": "${workspaceFolder}/part3/phonebook-backend/.env",
             "program": "${workspaceFolder}/part3/phonebook-backend/index.js"
         }
     ]

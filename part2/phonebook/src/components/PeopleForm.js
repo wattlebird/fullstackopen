@@ -20,6 +20,11 @@ const PeopleFormContainer = ({onAdd, onUpdate, people, onAlert}) => {
           onUpdate(item.id, data)
           setName("")
           setNum("")
+        }, err => {
+          onAlert({
+            message: err.response.data.error,
+            status: 'error'
+          })
         })
       }
       return
@@ -31,6 +36,11 @@ const PeopleFormContainer = ({onAdd, onUpdate, people, onAlert}) => {
       onAlert({
         message: `${name} is added.`,
         status: 'success'
+      })
+    }, err => {
+      onAlert({
+        message: err.response.data.error,
+        status: 'error'
       })
     })
   }, [name, num, people, setName, setNum, onAdd, onUpdate, onAlert, isDuplicate])
