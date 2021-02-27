@@ -7,12 +7,12 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "Launch Program",
+            "name": "Backend debug",
             "skipFiles": [
                 "<node_internals>/**"
             ],
-            "envFile": "${workspaceFolder}/part3/phonebook-backend/.env",
-            "program": "${workspaceFolder}/part3/phonebook-backend/index.js"
+            "envFile": "${workspaceFolder}/part4/bloglist/.env",
+            "program": "${workspaceFolder}/part4/bloglist/index.js"
         },
         {
             "name": "Debug Jest Tests",
